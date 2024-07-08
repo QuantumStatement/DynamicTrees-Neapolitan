@@ -6,14 +6,13 @@ import com.ferreusveritas.dynamictrees.block.leaves.LeavesProperties;
 import com.ferreusveritas.dynamictrees.block.leaves.PalmLeavesProperties;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.Material;
-import net.minecraft.world.level.material.MaterialColor;
+import net.minecraft.world.level.material.MapColor;
 
 public class BananaLeavesProperties extends PalmLeavesProperties {
 
@@ -24,10 +23,8 @@ public class BananaLeavesProperties extends PalmLeavesProperties {
     }
 
     @Override
-    public BlockBehaviour.Properties getDefaultBlockProperties(Material material, MaterialColor materialColor) {
-        return BlockBehaviour.Properties.of(Material.PLANT, MaterialColor.COLOR_LIGHT_GREEN).strength(0.2F).sound(SoundType.WEEPING_VINES)
-                .noOcclusion().isSuffocating((s, r, p) -> false).isViewBlocking((s, r, p) -> false).randomTicks()
-                .isValidSpawn((s, r, p, e) -> e == EntityType.OCELOT || e == EntityType.PARROT);
+    public BlockBehaviour.Properties getDefaultBlockProperties(MapColor mapColor) {
+        return super.getDefaultBlockProperties(mapColor).strength(0.2F).sound(SoundType.WEEPING_VINES);
 
     }
 
@@ -53,17 +50,11 @@ public class BananaLeavesProperties extends PalmLeavesProperties {
                 super.onPlace(thisState, world, pos, oldState, bool);
             }
 
-//            @Deprecated
-//            public float getDestroyProgress(BlockState state, Player player, BlockGetter reader, BlockPos pos) {
-//                float f = state.getDestroySpeed(reader, pos);
-//                if (f == -1.0F) {
-//                    return 0.0F;
-//                } else {
-//                    int i = net.minecraftforge.common.ForgeHooks.canEntityDestroy(state, player, reader, pos) ? 30 : 100;
-//                    return player.getDigSpeed(state, pos) / f / (float)i;
-//                }
-//            }
         };
     }
 
+    @Override
+    public ItemStack getPrimitiveLeavesItemStack() {
+        return getPrimitiveLeaves().getCloneItemStack(null, null, null, null);
+    }
 }

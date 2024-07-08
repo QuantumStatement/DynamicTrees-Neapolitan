@@ -1,5 +1,9 @@
 {
   "type": "dtneapolitan:banana",
   "primitive_leaves": "neapolitan:banana_frond",
-  "cell_kit": "dynamictrees:palm"
+  "cell_kit": "dynamictrees:palm",
+  "frond_model_loader": "dynamictrees:medium_palm_fronds",
+  "model_overrides": {
+    "core_bottom": "dtneapolitan:block/banana_core_bottom"
+  }
 }

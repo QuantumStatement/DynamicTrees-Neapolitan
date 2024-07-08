@@ -12,7 +12,7 @@
   },
   "transformable": false,
   "perfect_biomes": { "type": "jungle" },
-  "primitive_sapling": "neapolitan:banana_frond",
+  "primitive_sapling": { "sapling_item": "neapolitan:banana_frond" },
   "can_craft_seed_to_sapling": false,
   "sapling_shape": "slim_sapling",
   "acceptable_soils": ["dirt_like", "sand_like", "gravel_like"],

@@ -11,7 +11,7 @@
               "type": "minecraft:item",
               "conditions": [
                 {
-                  "condition": "minecraft:alternative",
+                  "condition": "minecraft:any_of",
                   "terms": [
                     {
                       "condition": "minecraft:match_tool",
@@ -38,7 +38,7 @@
               "name": "neapolitan:banana_frond"
             },
             {
-              "type": "dynamictrees:weighted_item",
+              "type": "minecraft:item",
               "conditions": [
                 {
                   "condition": "minecraft:survives_explosion"
@@ -47,15 +47,12 @@
                   "condition": "dynamictrees:seasonal_seed_drop_chance"
                 }
               ],
-              "items": {
-                "neapolitan:small_banana_frond": 1,
-                "neapolitan:banana_frond": 1,
-                "neapolitan:large_banana_frond": 1
-              }
+              "name": "neapolitan:banana_frond"
             }
           ]
         }
       ]
     }
-  ]
+  ],
+  "random_sequence": "dtneapolitan:blocks/banana_leaves"
 }

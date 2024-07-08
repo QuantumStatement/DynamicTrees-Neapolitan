@@ -7,7 +7,8 @@
   "primary_thickness": 3,
   "secondary_thickness": 3,
   "branch_properties": {
-    "material": "grass",
-    "material_color": "color_brown"
-  }
+    "sound": "stem",
+    "map_color": "COLOR_BROWN"
+  },
+  "loot_volume_multiplier": 2.0
 }

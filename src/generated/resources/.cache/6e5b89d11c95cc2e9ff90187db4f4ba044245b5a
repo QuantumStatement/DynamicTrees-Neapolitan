@@ -1,0 +1,9 @@
+// 1.20.1	2024-07-07T22:01:28.0625951	Block States: dtneapolitan
+7aa824e579a6c2692c4e7375208a59bf27f3dedb assets/dtneapolitan/blockstates/banana_branch.json
+4ef2be9b09e0820b53e909784b2eaaf64997a98f assets/dtneapolitan/blockstates/banana_leaves.json
+22818473dbb682348de044ebf2247d6c5ef988eb assets/dtneapolitan/blockstates/banana_sapling.json
+4f9491abf9b23a9bf2ba9aba21e336479a05fa03 assets/dtneapolitan/models/block/banana_branch.json
+b4a9542416c849eadeccbce227385330abfe049f assets/dtneapolitan/models/block/palm_leaves/banana_core_bottom.json
+02f3df32362dd5571f0c6ee39cb9ee72ef06213e assets/dtneapolitan/models/block/palm_leaves/banana_core_top.json
+a79592d090d604dd8de2de950c18bef1203512bd assets/dtneapolitan/models/block/palm_leaves/banana_frond.json
+fb1d95579c659ab35faa5960c330b1c1bcb5ee19 assets/dtneapolitan/models/block/saplings/banana.json

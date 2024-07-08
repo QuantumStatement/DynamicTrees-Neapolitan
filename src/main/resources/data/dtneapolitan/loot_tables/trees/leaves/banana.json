@@ -1,11 +1,11 @@
 {
-  "type": "dynamictrees:leaves",
+  "type": "minecraft:block",
   "pools": [
     {
       "rolls": 1,
       "entries": [
         {
-          "type": "dynamictrees:weighted_item",
+          "type": "minecraft:item",
           "conditions": [
             {
               "condition": "minecraft:survives_explosion"
@@ -21,9 +21,10 @@
               ]
             }
           ],
-          "item": "neapolitan:banana_frond"
+          "name": "neapolitan:banana_frond"
         }
       ]
     }
-  ]
+  ],
+  "random_sequence": "dtneapolitan:blocks/banana_leaves"
 }

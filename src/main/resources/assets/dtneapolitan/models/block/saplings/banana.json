@@ -2,8 +2,8 @@
 	"credit": "Made with Blockbench",
 	"ambientocclusion": false,
 	"textures": {
-		"particle": "dtneapolitan:block/palm_frond",
-		"leaves": "dtneapolitan:block/palm_frond",
+		"particle": "dtneapolitan:block/banana_frond",
+		"leaves": "dtneapolitan:block/banana_frond",
 		"log": "neapolitan:block/banana_stalk"
 	},
 	"elements": [

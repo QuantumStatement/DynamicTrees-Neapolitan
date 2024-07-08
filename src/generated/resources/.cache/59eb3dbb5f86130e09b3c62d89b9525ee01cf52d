@@ -1,0 +1,6 @@
+// 1.20.1	2024-07-07T22:01:28.0580952	Loot Tables
+bc34f2ded2bd9e7dc88b5e067b555f4b6c11625b data/dtneapolitan/loot_tables/blocks/banana_bunch.json
+fa6876dbfc7d5c1bbfe6d18f2dc9245ca13cf932 data/dtneapolitan/loot_tables/blocks/banana_leaves.json
+dfa18b8290058edf6256158d0fe780f67c8f3de8 data/dtneapolitan/loot_tables/trees/branches/banana.json
+59876061280fd1a4aff57e4058b966cf4266074f data/dtneapolitan/loot_tables/trees/leaves/banana.json
+23b11cdf221de2912ccc44a2daaeea80cdc73120 data/dtneapolitan/loot_tables/trees/voluntary/banana.json

@@ -1,0 +1,6 @@
+{
+  "parent": "dtneapolitan:block/banana_core_bottom",
+  "textures": {
+    "core_bottom": "dtneapolitan:block/banana_base"
+  }
+}
