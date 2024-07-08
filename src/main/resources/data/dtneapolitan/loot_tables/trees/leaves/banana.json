@@ -14,21 +14,14 @@
               "condition": "minecraft:table_bonus",
               "enchantment": "minecraft:fortune",
               "chances": [
-                0.0625,
-                0.125,
-                0.1875,
-                0.25
+                0.6,
+                0.7,
+                0.8,
+                1.0
               ]
-            },
-            {
-              "condition": "dynamictrees:seasonal_seed_drop_chance"
             }
           ],
-          "items": {
-            "neapolitan:small_banana_frond": 1,
-            "neapolitan:banana_frond": 1,
-            "neapolitan:large_banana_frond": 1
-          }
+          "item": "neapolitan:banana_frond"
         }
       ]
     }

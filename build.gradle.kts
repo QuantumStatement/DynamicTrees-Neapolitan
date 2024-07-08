@@ -17,6 +17,8 @@ plugins {
     id("idea")
     id("maven-publish")
     id("com.matthewprenger.cursegradle") version "1.4.0"
+    id("com.modrinth.minotaur") version "2.+"
+    id("com.harleyoconnor.autoupdatetool") version "1.0.7"
 }
 
 repositories {
@@ -84,16 +86,15 @@ dependencies {
     minecraft("net.minecraftforge:forge:$mcVersion-${property("forgeVersion")}")
 
     implementation(fg.deobf("com.ferreusveritas.dynamictrees:DynamicTrees-$mcVersion:${property("dynamicTreesVersion")}"))
-    //implementation(fg.deobf("vazkii.autoreglib:AutoRegLib:${property("arlVersion")}"))
-    implementation(fg.deobf("curse.maven:neapolitan-382016:3881528"))
+    runtimeOnly(fg.deobf("com.ferreusveritas.dynamictreesplus:DynamicTreesPlus-$mcVersion:${property("dynamicTreesPlusVersion")}"))
 
-    runtimeOnly(fg.deobf("curse.maven:blueprint-382216:3991478"))
-    //runtimeOnly(fg.deobf("com.ferreusveritas.dynamictreesplus:DynamicTreesPlus-$mcVersion:${property("dynamicTreesPlusVersion")}"))
+    runtimeOnly(fg.deobf("curse.maven:blueprint-382216:4749000"))
+    implementation(fg.deobf("curse.maven:neapolitan-382016:4783978"))
 
-    runtimeOnly(fg.deobf("curse.maven:jade-324717:3970956"))
-    runtimeOnly(fg.deobf("mezz.jei:jei-$mcVersion:${property("jeiVersion")}"))
+    runtimeOnly(fg.deobf("curse.maven:jade-324717:4433884"))
+    runtimeOnly(fg.deobf("curse.maven:jei-238222:4615177"))
     runtimeOnly(fg.deobf("org.squiddev:cc-tweaked-$mcVersion:${property("ccVersion")}"))
-    runtimeOnly(fg.deobf("com.harleyoconnor.suggestionproviderfix:SuggestionProviderFix-1.18.1:${property("suggestionProviderFixVersion")}"))
+    runtimeOnly(fg.deobf("com.harleyoconnor.suggestionproviderfix:SuggestionProviderFix-1.19:${property("suggestionProviderFixVersion")}"))
     runtimeOnly(fg.deobf("vazkii.patchouli:Patchouli:${property("patchouliVersion")}"))
 }
 
@@ -138,7 +139,7 @@ curseforge {
             mainArtifact(tasks.findByName("jar")) {
                 relations {
                     requiredDependency("dynamictrees")
-                    requiredDependency("quark")
+                    requiredDependency("neapolitan")
                 }
             }
         }

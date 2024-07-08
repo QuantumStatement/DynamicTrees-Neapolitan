@@ -4,15 +4,17 @@ import com.ferreusveritas.dynamictrees.block.leaves.PalmLeavesProperties;
 import com.ferreusveritas.dynamictrees.client.ModelUtils;
 import com.ferreusveritas.dynamictrees.util.CoordUtils;
 import com.google.common.primitives.Ints;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.*;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.SimpleBakedModel;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.client.model.data.IDynamicBakedModel;
-import net.minecraftforge.client.model.data.IModelData;
+import net.minecraftforge.client.model.IDynamicBakedModel;
+import net.minecraftforge.client.model.data.ModelData;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -29,7 +31,7 @@ public class PalmLeavesBakedModel implements IDynamicBakedModel {
 
     private final BakedModel[] bakedFronds = new BakedModel[8]; // 8 = Number of surrounding blocks
 
-    public PalmLeavesBakedModel (ResourceLocation modelResLoc, ResourceLocation frondsResLoc){
+    public PalmLeavesBakedModel(ResourceLocation modelResLoc, ResourceLocation frondsResLoc){
         this.blockModel = new BlockModel(null, new ArrayList<>(), new HashMap<>(), false, BlockModel.GuiLight.FRONT, ItemTransforms.NO_TRANSFORMS, new ArrayList<>());
         this.frondsResLoc = frondsResLoc;
         INSTANCES.add(this);
@@ -40,7 +42,7 @@ public class PalmLeavesBakedModel implements IDynamicBakedModel {
 
         for (CoordUtils.Surround surr : CoordUtils.Surround.values()) {
 
-            SimpleBakedModel.Builder builder = new SimpleBakedModel.Builder(blockModel.customData, ItemOverrides.EMPTY).particle(frondsTexture);
+            SimpleBakedModel.Builder builder = new SimpleBakedModel.Builder(blockModel, ItemOverrides.EMPTY, false).particle(frondsTexture);
 
             BlockVertexData[] quadData = {
                     new BlockVertexData(0, 0, 3, 15, 4),
@@ -141,6 +143,7 @@ public class PalmLeavesBakedModel implements IDynamicBakedModel {
 
 
                     bakedFronds[surr.ordinal()] = builder.build();
+
                 }
             }
         }
@@ -148,7 +151,7 @@ public class PalmLeavesBakedModel implements IDynamicBakedModel {
 
     @Nonnull
     @Override
-    public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, @Nonnull Random rand, @Nonnull IModelData extraData) {
+    public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, @Nonnull RandomSource rand, @Nonnull ModelData extraData, @Nullable RenderType renderType) {
         if (state == null || side != null)
             return Collections.emptyList();
 
@@ -157,22 +160,11 @@ public class PalmLeavesBakedModel implements IDynamicBakedModel {
         int direction = state.getValue(PalmLeavesProperties.DynamicPalmLeavesBlock.DIRECTION);
 
         if (direction != 0)
-            quads.addAll(bakedFronds[direction-1].getQuads(state, null, rand, extraData));
+            quads.addAll(bakedFronds[direction-1].getQuads(state, null, rand, extraData, renderType));
 
 
         return quads;
     }
-
-//    @Nonnull
-//    @Override
-//    public IModelData getModelData(@Nonnull IBlockDisplayReader world, @Nonnull BlockPos pos, @Nonnull BlockState state, @Nonnull IModelData tileData) {
-//        final Block block = state.getBlock();
-//
-//        if (!(block instanceof PalmLeavesProperties.DynamicPalmLeavesBlock))
-//            return new ModelPalmSurround();
-//
-//        return new ModelPalmSurround(((PalmLeavesProperties.DynamicPalmLeavesBlock) block).getHydroSurround(state, world, pos), state.getValue(DynamicLeavesBlock.DISTANCE));
-//    }
 
     @Override
     public boolean useAmbientOcclusion() {
@@ -194,60 +186,17 @@ public class PalmLeavesBakedModel implements IDynamicBakedModel {
         return true;
     }
 
+    @Nonnull
     @Override
     public TextureAtlasSprite getParticleIcon() {
         return frondsTexture;
     }
 
+    @Nonnull
     @Override
     public ItemOverrides getOverrides() {
         return ItemOverrides.EMPTY;
     }
-
-    @Override
-    public boolean doesHandlePerspectives() {
-        return false;
-    }
-
-//    public static class ModelPalmSurround implements IModelData {
-//
-//        private final int hydro;
-//        private final boolean[] surround;
-//
-//        public ModelPalmSurround() {
-//            this(new boolean[8], 0);
-//        }
-//
-//        public ModelPalmSurround(boolean[] surround, int hydro) {
-//            this.surround = surround;
-//            this.hydro = hydro;
-//        }
-//
-//        public boolean[] getSurround (){
-//            return surround;
-//        }
-//
-//        public int getHydro (){
-//            return hydro;
-//        }
-//
-//        @Override
-//        public boolean hasProperty(ModelProperty<?> prop) {
-//            return false;
-//        }
-//
-//        @Nullable
-//        @Override
-//        public <T> T getData(ModelProperty<T> prop) {
-//            return null;
-//        }
-//
-//        @Nullable
-//        @Override
-//        public <T> T setData(ModelProperty<T> prop, T data) {
-//            return null;
-//        }
-//    }
 
     public static class BlockVertexData {
 

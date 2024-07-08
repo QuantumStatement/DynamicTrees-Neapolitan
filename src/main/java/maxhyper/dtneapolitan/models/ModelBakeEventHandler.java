@@ -1,11 +1,8 @@
 package maxhyper.dtneapolitan.models;
 
 import maxhyper.dtneapolitan.DynamicTreesNeapolitan;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.ModelBakeEvent;
-import net.minecraftforge.client.event.ModelRegistryEvent;
-import net.minecraftforge.client.model.ModelLoaderRegistry;
+import net.minecraftforge.client.event.ModelEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
@@ -13,12 +10,12 @@ import net.minecraftforge.fml.common.Mod;
 public class ModelBakeEventHandler {
 
     @SubscribeEvent
-    public static void onModelRegistryEvent(ModelRegistryEvent event) {
-        ModelLoaderRegistry.registerLoader(new ResourceLocation(DynamicTreesNeapolitan.MOD_ID, "palm_fronds"), new PalmLeavesModelLoader());
+    public static void onModelRegistryEvent(ModelEvent.RegisterGeometryLoaders event) {
+        event.register("palm_fronds", new PalmLeavesModelLoader());
     }
 
     @SubscribeEvent
-    public static void onModelBake(ModelBakeEvent event) {
+    public static void onModelBake(ModelEvent.BakingCompleted event) {
         // Setup fronds models
         PalmLeavesBakedModel.INSTANCES.forEach(PalmLeavesBakedModel::setupModels);
     }
