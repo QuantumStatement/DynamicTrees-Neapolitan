@@ -8,10 +8,21 @@ import com.ferreusveritas.dynamictrees.systems.genfeature.GenFeatureConfiguratio
 import com.ferreusveritas.dynamictrees.systems.genfeature.context.PostGenerationContext;
 import com.ferreusveritas.dynamictrees.systems.genfeature.context.PostGrowContext;
 import com.ferreusveritas.dynamictrees.util.CoordUtils;
+import com.teamabnormals.neapolitan.common.entity.animal.Chimpanzee;
+import com.teamabnormals.neapolitan.core.NeapolitanConfig;
+import com.teamabnormals.neapolitan.core.other.tags.NeapolitanBiomeTags;
+import com.teamabnormals.neapolitan.core.registry.NeapolitanEntityTypes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.SpawnGroupData;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.LeavesBlock;
 
 public class BananaFruitGenFeature extends FruitGenFeature {
@@ -41,19 +52,31 @@ public class BananaFruitGenFeature extends FruitGenFeature {
         }
         int qty = configuration.get(QUANTITY);
         qty *= context.fruitProductionFactor();
+
+        BlockPos fruitPos = null;
         for (int i = 0; i < qty; i++) {
-            this.placeDuringWorldGen(configuration, configuration.get(FRUIT), context.level(), context.pos(),
+            BlockPos newPos = this.placeDuringWorldGen(configuration, configuration.get(FRUIT), context.level(), context.pos(),
                     context.endPoints().get(0), context.seasonValue());
+            if (newPos != null) fruitPos = newPos;
+        }
+        if (fruitPos != null && context.levelContext().level() instanceof WorldGenLevel wgl){
+            boolean canSpawnChimps = wgl.getBiome(fruitPos).is(NeapolitanBiomeTags.HAS_CHIMPANZEE);
+            if (context.random().nextDouble() < NeapolitanConfig.COMMON.chimpanzeeGroupChance.get() && canSpawnChimps) {
+                spawnChimps(wgl, fruitPos);
+            }
         }
         return true;
     }
 
-    protected void placeDuringWorldGen(GenFeatureConfiguration configuration, Fruit fruit, LevelAccessor level,
+    protected BlockPos placeDuringWorldGen(GenFeatureConfiguration configuration, Fruit fruit, LevelAccessor level,
                                        BlockPos rootPos, BlockPos leavesPos, Float seasonValue) {
         Direction placeDirection = CoordUtils.HORIZONTALS[level.getRandom().nextInt(4)];
         if (shouldPlaceDuringWorldGen(configuration, level, rootPos, leavesPos, placeDirection)) {
-            fruit.placeDuringWorldGen(level, leavesPos.offset(placeDirection.getNormal()), seasonValue);
+            BlockPos placePos = leavesPos.offset(placeDirection.getNormal());
+            fruit.placeDuringWorldGen(level, placePos, seasonValue);
+            return placePos;
         }
+        return null;
     }
 
     protected boolean shouldPlaceDuringWorldGen(GenFeatureConfiguration configuration, LevelAccessor level, BlockPos rootPos,
@@ -100,6 +123,39 @@ public class BananaFruitGenFeature extends FruitGenFeature {
                                   BlockPos leavesPos, Direction placeDirection) {
         return leavesPos.getY() != rootPos.getY() && level.isEmptyBlock(leavesPos.offset(placeDirection.getNormal()))
                 && level.getRandom().nextFloat() <= configuration.get(PLACE_CHANCE);
+    }
+
+
+    /**
+     * Code taken from BananaPlantFeature in the Neapolitan mod
+     */
+    private static void spawnChimps(WorldGenLevel level, BlockPos pos) {
+        RandomSource random = level.getRandom();
+        int minSpawnAttempts = NeapolitanConfig.COMMON.chimpanzeeMinSpawnAttempts.get();
+        int maxSpawnAttempts = NeapolitanConfig.COMMON.chimpanzeeMaxSpawnAttempts.get();
+        if (maxSpawnAttempts >= minSpawnAttempts && maxSpawnAttempts > 0 && minSpawnAttempts >= 0) {
+            int spawnCount = minSpawnAttempts + random.nextInt(maxSpawnAttempts - minSpawnAttempts);
+            int spawnedChimps = 0;
+
+            for(int i = 0; i < spawnCount; ++i) {
+                int spawnRange = 4;
+                double d0 = pos.getX() + (random.nextDouble() - random.nextDouble()) * spawnRange + 0.5;
+                double d1 = (pos.getY() + random.nextInt(3) - 1);
+                double d2 = pos.getZ() + (random.nextDouble() - random.nextDouble()) * spawnRange + 0.5;
+                if (level.noCollision((NeapolitanEntityTypes.CHIMPANZEE.get()).getAABB(d0, d1, d2)) && spawnedChimps < NeapolitanConfig.COMMON.chimpanzeeMaxGroupSize.get()) {
+                    Chimpanzee chimp = NeapolitanEntityTypes.CHIMPANZEE.get().create(level.getLevel());
+                    if (chimp != null) {
+                        chimp.moveTo(d0, d1, d2, level.getRandom().nextFloat() * 360.0F, 0.0F);
+                        chimp.finalizeSpawn(level, level.getCurrentDifficultyAt(chimp.blockPosition()), MobSpawnType.STRUCTURE, null, null);
+                        chimp.setBaby(random.nextInt(4) == 0);
+                        level.addFreshEntity(chimp);
+                        chimp.spawnAnim();
+                        ++spawnedChimps;
+                    }
+                }
+            }
+
+        }
     }
 
 }
