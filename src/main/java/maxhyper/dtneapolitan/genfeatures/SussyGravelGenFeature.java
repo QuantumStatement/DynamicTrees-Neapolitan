@@ -9,16 +9,19 @@ import com.ferreusveritas.dynamictrees.systems.genfeature.GenFeature;
 import com.ferreusveritas.dynamictrees.systems.genfeature.GenFeatureConfiguration;
 import com.ferreusveritas.dynamictrees.systems.genfeature.context.PostGenerationContext;
 import com.ferreusveritas.dynamictrees.tree.species.Species;
+import com.teamabnormals.blueprint.core.util.BlockUtil;
 import com.teamabnormals.neapolitan.core.NeapolitanConfig;
 import com.teamabnormals.neapolitan.core.other.NeapolitanLootTables;
 import com.teamabnormals.neapolitan.core.other.tags.NeapolitanBiomeTags;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.WorldGenRegion;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.StairBlock;
@@ -26,7 +29,6 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.Half;
-import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraftforge.common.Tags;
 import org.jetbrains.annotations.NotNull;
 
@@ -48,7 +50,7 @@ public class SussyGravelGenFeature extends GenFeature {
     @Override
     protected boolean postGenerate(@NotNull GenFeatureConfiguration configuration, PostGenerationContext context) {
         BlockPos pos = context.pos();
-        Level level = context.levelContext().level();
+        LevelAccessor level = context.level();
         RandomSource random = context.random();
         boolean canSpawnChimps = level.getBiome(pos).is(NeapolitanBiomeTags.HAS_CHIMPANZEE);
         boolean suspicious = canSpawnChimps && NeapolitanConfig.COMMON.suspiciousBananaPlants.get() && (double)random.nextFloat() < NeapolitanConfig.COMMON.suspiciousBananaPlantChance.get();
@@ -59,15 +61,18 @@ public class SussyGravelGenFeature extends GenFeature {
             SoilProperties gravelSoil = SoilHelper.getProperties(Blocks.GRAVEL);
             if (!rootyBlock.getSoilProperties().equals(gravelSoil)) {
                 BlockEntity TE = level.getBlockEntity(pos);
-                BlockState rootCollarState = gravelSoil.getSoilState(rootyBlock.getPrimitiveSoilState(soilState), 0, soilState.getValue(RootyBlock.IS_VARIANT));
-                AerialRootsSoilProperties.updateRadius(level, rootCollarState, pos, 3, true);
-                if (TE != null) {
-                    Species species = rootyBlock.getSpecies(soilState, level, pos);
-                    level.setBlockEntity(TE);
-                    if (TE instanceof SpeciesBlockEntity speciesTE) {
-                        speciesTE.setSpecies(species);
-                    }
+                //if there's a TileEntity don't bother, not advisable to touch them during worldgen
+                if (TE == null){
+                    BlockState newSoil = gravelSoil.getSoilState(rootyBlock.getPrimitiveSoilState(soilState), 0, soilState.getValue(RootyBlock.IS_VARIANT));
+                    level.setBlock(pos, newSoil, 3);
                 }
+//                if (TE != null) {
+//                    Species species = rootyBlock.getSpecies(soilState, level, pos);
+//                    lev.setBlockEntity(TE);
+//                    if (TE instanceof SpeciesBlockEntity speciesTE) {
+//                        speciesTE.setSpecies(species);
+//                    }
+//                }
             }
         }
 
@@ -77,7 +82,7 @@ public class SussyGravelGenFeature extends GenFeature {
         return super.postGenerate(configuration, context);
     }
 
-    private void placeGravelAround (Level level, BlockPos pos, RandomSource random, boolean suspicious){
+    private void placeGravelAround (LevelAccessor level, BlockPos pos, RandomSource random, boolean suspicious){
         boolean chimpHead = suspicious && random.nextFloat() < 0.25F;
         int horizontalRange = (suspicious ? 3 : 2) + random.nextInt(2);
         int verticalMin = suspicious ? -8 : -2;
@@ -131,9 +136,9 @@ public class SussyGravelGenFeature extends GenFeature {
         }
     }
 
-    private static void generateChimpHead(Level level, BlockPos origin, Direction facing, RandomSource random) {
+    private static void generateChimpHead(LevelAccessor level, BlockPos origin, Direction facing, RandomSource random) {
         BlockPos.betweenClosedStream(origin, origin.below(3).relative(facing.getOpposite(), 2).relative(facing.getCounterClockWise(), 3)).map(BlockPos::immutable).forEach((pos) -> {
-            placeMossyBlock(level, random, (Direction)null, pos, 0, 0, 0, Blocks.COBBLESTONE.defaultBlockState());
+            placeMossyBlock(level, random, null, pos, 0, 0, 0, Blocks.COBBLESTONE.defaultBlockState());
         });
         placeMossyBlock(level, random, facing, origin, -1, -1, -1, Blocks.COBBLESTONE.defaultBlockState());
         placeMossyBlock(level, random, facing, origin, 4, -1, -1, Blocks.COBBLESTONE.defaultBlockState());
@@ -141,24 +146,24 @@ public class SussyGravelGenFeature extends GenFeature {
         placeMossyBlock(level, random, facing, origin, 4, 0, -1, Blocks.COBBLESTONE_SLAB.defaultBlockState());
         placeMossyBlock(level, random, facing, origin, 1, -1, -1, Blocks.EMERALD_BLOCK.defaultBlockState());
         placeMossyBlock(level, random, facing, origin, 2, -1, -1, Blocks.EMERALD_BLOCK.defaultBlockState());
-        placeMossyBlock(level, random, facing, origin, 1, -1, 0, (BlockState)Blocks.COBBLESTONE_STAIRS.defaultBlockState().setValue(StairBlock.FACING, facing.getCounterClockWise()));
-        placeMossyBlock(level, random, facing, origin, 2, -1, 0, (BlockState)Blocks.COBBLESTONE_STAIRS.defaultBlockState().setValue(StairBlock.FACING, facing.getClockWise()));
+        placeMossyBlock(level, random, facing, origin, 1, -1, 0, Blocks.COBBLESTONE_STAIRS.defaultBlockState().setValue(StairBlock.FACING, facing.getCounterClockWise()));
+        placeMossyBlock(level, random, facing, origin, 2, -1, 0, Blocks.COBBLESTONE_STAIRS.defaultBlockState().setValue(StairBlock.FACING, facing.getClockWise()));
         placeMossyBlock(level, random, facing, origin, 1, -1, 1, Blocks.COBBLESTONE_SLAB.defaultBlockState());
         placeMossyBlock(level, random, facing, origin, 2, -1, 1, Blocks.COBBLESTONE_SLAB.defaultBlockState());
-        placeMossyBlock(level, random, facing, origin, 1, -2, 1, (BlockState)((BlockState)Blocks.COBBLESTONE_STAIRS.defaultBlockState().setValue(StairBlock.FACING, facing.getClockWise())).setValue(StairBlock.HALF, Half.TOP));
-        placeMossyBlock(level, random, facing, origin, 2, -2, 1, (BlockState)((BlockState)Blocks.COBBLESTONE_STAIRS.defaultBlockState().setValue(StairBlock.FACING, facing.getCounterClockWise())).setValue(StairBlock.HALF, Half.TOP));
+        placeMossyBlock(level, random, facing, origin, 1, -2, 1, Blocks.COBBLESTONE_STAIRS.defaultBlockState().setValue(StairBlock.FACING, facing.getClockWise()).setValue(StairBlock.HALF, Half.TOP));
+        placeMossyBlock(level, random, facing, origin, 2, -2, 1, Blocks.COBBLESTONE_STAIRS.defaultBlockState().setValue(StairBlock.FACING, facing.getCounterClockWise()).setValue(StairBlock.HALF, Half.TOP));
         placeMossyBlock(level, random, facing, origin, 1, -3, 1, Blocks.COBBLESTONE.defaultBlockState());
         placeMossyBlock(level, random, facing, origin, 2, -3, 1, Blocks.COBBLESTONE.defaultBlockState());
     }
 
-    private static void placeMossyBlock(Level level, RandomSource random, Direction facing, BlockPos pos, int x, int y, int z, BlockState state) {
+    private static void placeMossyBlock(LevelAccessor level, RandomSource random, Direction facing, BlockPos pos, int x, int y, int z, BlockState state) {
         if (state.is(Blocks.EMERALD_BLOCK)) {
             if (random.nextBoolean()) {
                 return;
             }
         } else if (random.nextFloat() < 0.4F) {
             Block block = state.is(Blocks.COBBLESTONE) ? Blocks.MOSSY_COBBLESTONE : (state.is(Blocks.COBBLESTONE_SLAB) ? Blocks.MOSSY_COBBLESTONE_SLAB : Blocks.MOSSY_COBBLESTONE_STAIRS);
-            state = transferAllBlockStates(state, block.defaultBlockState());
+            state = BlockUtil.transferAllBlockStates(state, block.defaultBlockState());
         }
 
         if (facing != null) {
@@ -167,7 +172,7 @@ public class SussyGravelGenFeature extends GenFeature {
                 x = z;
                 z = temp - 3;
                 if (state.hasProperty(StairBlock.FACING)) {
-                    state = (BlockState)state.setValue(StairBlock.FACING, ((Direction)state.getValue(StairBlock.FACING)).getOpposite());
+                    state = state.setValue(StairBlock.FACING, (state.getValue(StairBlock.FACING)).getOpposite());
                 }
             }
 
@@ -176,18 +181,6 @@ public class SussyGravelGenFeature extends GenFeature {
         }
 
         level.setBlock(pos.offset(x, y, z), state, 19);
-    }
-
-    public static BlockState transferAllBlockStates(BlockState initial, BlockState after) {
-        BlockState block = after;
-
-        for (Property<?> value : initial.getBlock().getStateDefinition().getProperties()) {
-            if (after.hasProperty(value) && initial.getValue(value) != null) {
-                block = block.setValue(value, initial.getValue((Property) value));
-            }
-        }
-
-        return block;
     }
 
 }

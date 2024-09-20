@@ -59,7 +59,8 @@ public class BananaFruitGenFeature extends FruitGenFeature {
                     context.endPoints().get(0), context.seasonValue());
             if (newPos != null) fruitPos = newPos;
         }
-        if (fruitPos != null && context.levelContext().level() instanceof WorldGenLevel wgl){
+
+        if (fruitPos != null && context.level() instanceof WorldGenLevel wgl){
             boolean canSpawnChimps = wgl.getBiome(fruitPos).is(NeapolitanBiomeTags.HAS_CHIMPANZEE);
             if (context.random().nextDouble() < NeapolitanConfig.COMMON.chimpanzeeGroupChance.get() && canSpawnChimps) {
                 spawnChimps(wgl, fruitPos);

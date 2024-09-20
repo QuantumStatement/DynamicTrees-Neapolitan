@@ -88,7 +88,7 @@ dependencies {
     implementation(fg.deobf("com.ferreusveritas.dynamictrees:DynamicTrees-$mcVersion:${property("dynamicTreesVersion")}"))
     runtimeOnly(fg.deobf("com.ferreusveritas.dynamictreesplus:DynamicTreesPlus-$mcVersion:${property("dynamicTreesPlusVersion")}"))
 
-    runtimeOnly(fg.deobf("curse.maven:blueprint-382216:5292242"))
+    implementation(fg.deobf("curse.maven:blueprint-382216:5292242"))
     implementation(fg.deobf("curse.maven:neapolitan-382016:5296594"))
 
     runtimeOnly(fg.deobf("curse.maven:jade-324717:5072729"))
